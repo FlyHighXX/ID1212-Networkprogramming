@@ -85,7 +85,7 @@ class ClientHandler implements Runnable {
                         username = msg.msgBody;
                         server.broadcast(username + JOIN_MESSAGE);
                         break;
-                    case ENTRY:
+                    case GUESS:
                         server.broadcast(username + USERNAME_DELIMETER + msg.msgBody);
                         break;
                     case DISCONNECT:

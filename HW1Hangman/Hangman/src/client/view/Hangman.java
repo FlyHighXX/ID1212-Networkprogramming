@@ -49,11 +49,11 @@ public class Hangman implements Runnable {
                         contr.sendUsername(cmdLine.getParameter(0));
                         break;
                     default :
-                        contr.sendMsg(cmdLine.getUserInput());
+                        contr.guessingLetter(cmdLine.getUserInput());
                 }
             }catch (Exception e) {
-            outMgr.println("Operation failed");
-            System.err.println(e);
+                outMgr.println("Operation failed");
+                System.err.println(e);
             }
         }
     }

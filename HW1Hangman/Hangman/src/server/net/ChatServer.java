@@ -58,9 +58,11 @@ public class ChatServer {
      * @param msg The message to broadcast.
      */
     void broadcast(String msg) {
-        contr.appendEntry(msg);
-        synchronized (clients) {
-            clients.forEach((client) -> client.sendMsg(msg));
+        try{
+            contr.newGuess(msg);
+        }
+        catch (IOException e){
+            System.err.println(e);
         }
     }
 

@@ -41,8 +41,8 @@ public enum Command {
      */
     QUIT,
     /**
-     * No command was specified. This means the entire command line is interpreted as an entry in
-     * the conversation, and is sent to all clients.
+     * No command was specified. This is interpreted as the user guessing a letter or a word in the game.
      */
     NO_COMMAND
+    
 }

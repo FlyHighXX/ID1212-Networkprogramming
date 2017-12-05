@@ -9,7 +9,6 @@ import client.net.OutputHandler;
 import client.net.ServerConnection;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.concurrent.CompletableFuture;
 
 /**
  *
@@ -35,11 +34,11 @@ public class Controller {
     }
 
     public void sendUsername(String parameter) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("SEND USERNAME");
     }
 
-    public void sendMsg(String userInput) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void guessingLetter(String userInput) {
+        serverConnection.guessingLetter(userInput);
     }
     
 }

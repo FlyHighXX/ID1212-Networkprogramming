@@ -5,14 +5,17 @@
  */
 package server.controller;
 
+import server.model.Hangman;
+import java.io.IOException;
+
 /**
  *
  * @author Diaco Uthman
  */
 public class Controller {
-
-    public void appendEntry(String msg) {
-        System.out.println("hej");
+    private final Hangman gameHandler = new Hangman();
+    public void newGuess(String msg)throws IOException{
+        gameHandler.newGuess(msg);
     }
 
     public String[] getConversation() {

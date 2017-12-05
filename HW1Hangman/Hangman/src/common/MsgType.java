@@ -32,10 +32,9 @@ public enum MsgType {
      */
     USER,
     /**
-     * A new entry in a conversation. A client sends such a message to make the server broadcast the
-     * message to all clients.
+     * A new guess in the game. A client guesses either a letter in the word, or guesses on the entire word.
      */
-    ENTRY,
+    GUESS,
     /**
      * A chat entry that is broadcasted from server to all clients.
      */

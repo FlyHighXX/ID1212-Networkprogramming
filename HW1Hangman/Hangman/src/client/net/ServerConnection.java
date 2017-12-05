@@ -88,22 +88,19 @@ public class ServerConnection {
         sendMsg(MsgType.USER.toString(), username);
     }
 
-    /**
-     * Sends a chat entry to the server, which will broadcast it to all clients, including the
-     * sending client.
-     *
-     * @param msg The message to broadcast.
-     */
-    public void sendChatEntry(String msg) {
-        sendMsg(MsgType.ENTRY.toString(), msg);
-    }
-
     private void sendMsg(String... parts) {
         StringJoiner joiner = new StringJoiner(Constants.MSG_DELIMETER);
         for (String part : parts) {
             joiner.add(part);
         }
         toServer.println(joiner.toString());
+    }
+    /**
+     * Sends a guess to the server. The server will return whether the guess was right or not.
+     * @param userInput - The input from the user.
+     */
+    public void guessingLetter(String userInput) {
+        sendMsg(MsgType.GUESS.toString(),userInput);
     }
 
     private class Listener implements Runnable {
