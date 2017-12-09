@@ -35,8 +35,7 @@ public class ServerConnection {
         socket.connect(new InetSocketAddress(host, port), TIMEOUT_HALF_MINUTE);
         socket.setSoTimeout(TIMEOUT_HALF_HOUR);
         connected = true;
-        boolean autoFlush = true;
-        toServer = new PrintWriter(socket.getOutputStream(), autoFlush);
+        toServer = new PrintWriter(socket.getOutputStream(), true);
         fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         new Thread(new Listener(out)).start();
     }
