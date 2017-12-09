@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package server.model;
 
 import java.io.BufferedReader;
@@ -19,41 +14,51 @@ import java.util.Random;
  */
 public class Hangman {
     private final List<String> words = new ArrayList<>();
-    private final String file = "words.txt";
+    private final String file = "word.txt";
     private String chosenWord;
     private int remainingAttempts;
     private int score;
     private String currentWord;
+    private boolean currentGame;
     public Hangman(){
+        currentGame=false;
         try {
-            setWords();
+            setWords(); 
         } catch (IOException ex) {
             System.err.println(ex);
         }
+        this.score=0;
+    }
+    
+    public void newGame(){
         this.chosenWord = generateWord();
         this.currentWord = generateSecretWord();
         this.remainingAttempts = this.chosenWord.length();
-        this.score=0;
+        this.currentGame = true;
+        System.out.println(this.chosenWord);
     }
     public void newGuess(String msg) throws IOException {
         if(msg.length()==1){
             String currWord = this.currentWord;
-            fixWord(msg.charAt(0));
+            fixWord(msg.toLowerCase().charAt(0));
             if(currWord.equals(this.currentWord)){
-                
-            }else{
                 this.remainingAttempts-=1;
             }
         }
         else if(msg.length()==this.chosenWord.length()){
             if(msg.equals(this.chosenWord)){
-                this.chosenWord=null;
                 this.score+=1;
+                this.currentWord=msg;
+                this.currentGame=false;
             }
         }
         else if(this.remainingAttempts==0){
             this.score-=1;
-            this.chosenWord=null;
+            this.currentGame=false;
+        }
+        else if(this.currentWord.equals(this.chosenWord)){
+            this.score+=1;
+            this.currentGame=false;
         }
         else{
             throw new IOException("Wrong input");
@@ -77,18 +82,15 @@ public class Hangman {
         }
         this.currentWord=modifiedWord.toString();
     }
-
+    
     private void setWords () throws FileNotFoundException, IOException{
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
+                line = line.toLowerCase();
                 if(line.length() > 1)
                     this.words.add(line);
             }
-        }catch(FileNotFoundException e){
-            throw new FileNotFoundException("The file was not found");
-        }catch(IOException e){
-            throw new IOException("Something went wrong with the reading of the file");
         }
     }
 
@@ -106,5 +108,28 @@ public class Hangman {
     
     public String getWord(){
         return this.currentWord;
+    }
+    
+    public String getFullWord(){
+        return this.chosenWord;
+    }
+
+    public int getRemainingAttempts() {
+        return this.remainingAttempts;
+    }
+
+    public void endGame() {
+        this.chosenWord=null;
+        this.currentWord=null;
+        this.score-=1;
+        this.currentGame=false;
+    }
+
+    public boolean currentGame() {
+        return this.currentGame;
+    }
+
+    public boolean checkWord() {
+        return this.chosenWord.equals(this.currentWord);
     }
 }

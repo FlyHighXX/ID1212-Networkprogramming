@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client.view;
 
 import client.controller.Controller;
@@ -14,7 +9,6 @@ import java.util.Scanner;
  * @author Diaco Uthman
  */
 public class Hangman implements Runnable {
-    private static final String PROMPT = "> ";
     private Controller contr;
     private final Scanner console = new Scanner(System.in);
     private boolean receivingCmds = false;
@@ -33,23 +27,34 @@ public class Hangman implements Runnable {
     public void run() {
         while(this.receivingCmds){
             try{
-                CmdLine cmdLine = new CmdLine(readNextLine());
-                switch(cmdLine.getCmd()){
+                String[] cmd = readNextLine().split(" ");
+                Command ourCommand;
+                try{
+                    ourCommand = Command.valueOf(cmd[0].toUpperCase());
+                }catch (Throwable failedToReadCmd) {
+                    ourCommand = Command.NO_COMMAND;
+                }
+                
+                switch(ourCommand){
                     case QUIT:
                         this.receivingCmds=false;
                         contr.disconnect();
                         break;
 
                     case CONNECT :
-                        contr.connect(cmdLine.getParameter(0),
-                                    Integer.parseInt(cmdLine.getParameter(1)),
-                                    new ConsoleOutput());
+                        contr.connect(cmd[1],
+                                    Integer.parseInt(cmd[2]),new ConsoleOutput());
                         break;
-                    case USER :
-                        contr.sendUsername(cmdLine.getParameter(0));
+                    case START :
+                        contr.startNewGame();
                         break;
+                    case GUESS :
+                        contr.guessingLetter(cmd[1]);
+                        break;
+                    case GAMEINFO :
+                        contr.getGameInfo();
                     default :
-                        contr.guessingLetter(cmdLine.getUserInput());
+                        outMgr.println("Enter a correct command");
                 }
             }catch (Exception e) {
                 outMgr.println("Operation failed");
@@ -59,7 +64,6 @@ public class Hangman implements Runnable {
     }
     
     private String readNextLine() {
-        outMgr.print(PROMPT);
         return console.nextLine();
     }
     
@@ -67,7 +71,6 @@ public class Hangman implements Runnable {
         @Override
         public void handleMsg(String msg) {
             outMgr.println((String) msg);
-            outMgr.print(PROMPT);
         }
     }
 }

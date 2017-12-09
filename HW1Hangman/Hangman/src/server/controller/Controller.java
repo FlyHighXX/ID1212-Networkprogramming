@@ -22,5 +22,33 @@ public class Controller {
         String[] str = {"hej","hejd2"};
         return str;
     }
+
+    public String getWord() {
+        return this.gameHandler.getWord();
+    }
+
+    public void newGame() {
+        this.gameHandler.newGame();
+    }
+
+    public int getScore() {
+        return this.gameHandler.getScore();
+    }
+
+    public int getRemainingAttempts() {
+        return this.gameHandler.getRemainingAttempts();
+    }
+
+    public void endGame() {
+        this.gameHandler.endGame();
+    }
+
+    public boolean currentGame() {
+        return this.gameHandler.currentGame();
+    }
+
+    public boolean checkWord() {
+        return this.gameHandler.checkWord();
+    }
     
 }

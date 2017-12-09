@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client.controller;
 
 import client.net.OutputHandler;
@@ -19,26 +14,30 @@ public class Controller {
     public void disconnect() {
         try {
             serverConnection.disconnect();
-    }catch(IOException ioe) {
-        throw new UncheckedIOException(ioe);
-    }
+        }catch(IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
     }
 
-    public void connect(String host, int port, OutputHandler consoleOutput) {
+    public void connect(String host, int port, OutputHandler out) {
     try {
-            serverConnection.connect(host, port, consoleOutput);
+            serverConnection.connect(host, port, out);
     }catch(IOException ioe) {
         throw new UncheckedIOException(ioe);
     }
-    consoleOutput.handleMsg("Connected to " + host + ":" + port);
-    }
-
-    public void sendUsername(String parameter) {
-        System.out.println("SEND USERNAME");
+    out.handleMsg("Connected to " + host + ":" + port);
     }
 
     public void guessingLetter(String userInput) {
         serverConnection.guessingLetter(userInput);
+    }
+    
+    public void startNewGame(){
+        this.serverConnection.startNewGame();
+    }
+
+    public void getGameInfo() {
+        this.serverConnection.getGameInfo();
     }
     
 }

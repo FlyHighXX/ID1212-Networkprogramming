@@ -28,9 +28,9 @@ package common;
  */
 public enum MsgType {
     /**
-     * Specifies a user name. A client sends this message to tell the server its name.
+     * Starts a new game
      */
-    USER,
+    START,
     /**
      * A new guess in the game. A client guesses either a letter in the word, or guesses on the entire word.
      */
@@ -43,5 +43,9 @@ public enum MsgType {
      * Client is about to close, all server recourses related to the sending client shod be
      * released.
      */
-    DISCONNECT
+    DISCONNECT,
+    /**
+     * Extracts current game info to be sent to the user
+     */
+    GAMEINFO
 }

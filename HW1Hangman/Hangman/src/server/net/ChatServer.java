@@ -1,34 +1,9 @@
-/*
- * The MIT License
- *
- * Copyright 2017 Leif Lindbäck <leifl@kth.se>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package server.net;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
 import server.controller.Controller;
 
 /**
@@ -38,8 +13,6 @@ import server.controller.Controller;
 public class ChatServer {
     private static final int LINGER_TIME = 5000;
     private static final int TIMEOUT_HALF_HOUR = 1800000;
-    private final Controller contr = new Controller();
-    private final List<ClientHandler> clients = new ArrayList<>();
     private int portNo = 8080;
 
     /**
@@ -51,30 +24,17 @@ public class ChatServer {
         server.parseArguments(args);
         server.serve();
     }
-
     /**
      * Sends the specified message to all connected clients
      *
      * @param msg The message to broadcast.
      */
-    void broadcast(String msg) {
+    void guessWord(String msg, Controller contr) {
         try{
             contr.newGuess(msg);
         }
         catch (IOException e){
             System.err.println(e);
-        }
-    }
-
-    /**
-     * The chat client handled by the specified <code>ClientHandler</code> has disconnected from the
-     * server, and shall not participate in any future communication.
-     *
-     * @param handler The handler of the disconnected client.
-     */
-    void removeHandler(ClientHandler handler) {
-        synchronized (clients) {
-            clients.remove(handler);
         }
     }
 
@@ -93,10 +53,7 @@ public class ChatServer {
     private void startHandler(Socket clientSocket) throws SocketException {
         clientSocket.setSoLinger(true, LINGER_TIME);
         clientSocket.setSoTimeout(TIMEOUT_HALF_HOUR);
-        ClientHandler handler = new ClientHandler(this, clientSocket, contr.getConversation());
-        synchronized (clients) {
-            clients.add(handler);
-        }
+        ClientHandler handler = new ClientHandler(this, clientSocket);
         Thread handlerThread = new Thread(handler);
         handlerThread.setPriority(Thread.MAX_PRIORITY);
         handlerThread.start();
@@ -110,5 +67,33 @@ public class ChatServer {
                 System.err.println("Invalid port number, using default.");
             }
         }
+    }
+
+    String getUpdatedWord(Controller contr) {
+        return contr.getWord();
+    }
+
+    void newGame(Controller contr) {
+        contr.newGame();
+    }
+
+    int getScore(Controller contr) {
+        return contr.getScore();
+    }
+
+    int getRemainingAttempts(Controller contr) {
+        return contr.getRemainingAttempts();
+    }
+
+    void endGame(Controller contr) {
+        contr.endGame();
+    }
+
+    boolean currentGame(Controller contr) {
+        return contr.currentGame();
+    }
+
+    boolean checkWord(Controller contr) {
+        return contr.checkWord();
     }
 }

@@ -1,26 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright 2017 Leif Lindbäck <leifl@kth.se>.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package client.net;
 
 import java.io.BufferedReader;
@@ -30,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.StringJoiner;
-import common.Constants;
-import common.MessageException;
 import common.MsgType;
 
 /**
@@ -51,10 +26,10 @@ public class ServerConnection {
      *
      * @param host             Host name or IP address of server.
      * @param port             Server's port number.
-     * @param broadcastHandler Called whenever a broadcast is received from server.
+     * @param out
      * @throws IOException If failed to connect.
      */
-    public void connect(String host, int port, OutputHandler broadcastHandler) throws
+    public void connect(String host, int port, OutputHandler out) throws
             IOException {
         socket = new Socket();
         socket.connect(new InetSocketAddress(host, port), TIMEOUT_HALF_MINUTE);
@@ -63,7 +38,7 @@ public class ServerConnection {
         boolean autoFlush = true;
         toServer = new PrintWriter(socket.getOutputStream(), autoFlush);
         fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        new Thread(new Listener(broadcastHandler)).start();
+        new Thread(new Listener(out)).start();
     }
 
     /**
@@ -78,18 +53,12 @@ public class ServerConnection {
         connected = false;
     }
 
-    /**
-     * Sends the user's username to the server. That username will be prepended to all messages
-     * originating from this client, until a new username is specified.
-     *
-     * @param username The current user's username.
-     */
-    public void sendUsername(String username) {
-        sendMsg(MsgType.USER.toString(), username);
+    public void startNewGame() {
+        sendMsg(MsgType.START.toString());
     }
 
     private void sendMsg(String... parts) {
-        StringJoiner joiner = new StringJoiner(Constants.MSG_DELIMETER);
+        StringJoiner joiner = new StringJoiner("##");
         for (String part : parts) {
             joiner.add(part);
         }
@@ -103,32 +72,27 @@ public class ServerConnection {
         sendMsg(MsgType.GUESS.toString(),userInput);
     }
 
+    public void getGameInfo() {
+        sendMsg(MsgType.GAMEINFO.toString());
+    }
+
     private class Listener implements Runnable {
-        private final OutputHandler outputHandler;
-
-        private Listener(OutputHandler outputHandler) {
-            this.outputHandler = outputHandler;
+        private final OutputHandler out;
+        public Listener(OutputHandler out){
+            this.out=out;
         }
-
         @Override
         public void run() {
             try {
                 for (;;) {
-                    outputHandler.handleMsg(extractMsgBody(fromServer.readLine()));
+                    String mes = fromServer.readLine();
+                    this.out.handleMsg(mes);
                 }
-            } catch (Throwable connectionFailure) {
+            } catch (IOException connectionFailure) {
                 if (connected) {
-                    outputHandler.handleMsg("Lost connection.");
+                    this.out.handleMsg("Lost connection.");
                 }
             }
-        }
-
-        private String extractMsgBody(String entireMsg) {
-            String[] msgParts = entireMsg.split(Constants.MSG_DELIMETER);
-            if (MsgType.valueOf(msgParts[Constants.MSG_TYPE_INDEX].toUpperCase()) != MsgType.BROADCAST) {
-                throw new MessageException("Received corrupt message: " + entireMsg);
-            }
-            return msgParts[Constants.MSG_BODY_INDEX];
         }
     }
 }
