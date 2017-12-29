@@ -26,6 +26,9 @@ public class Hangman implements Runnable {
     @Override
     public void run() {
         while(this.receivingCmds){
+            System.out.println("---- HANGMAN MENU ----");
+            System.out.println("---- Write one of the following commands, followed by required arguments ----");
+            System.out.println("---- connect, start, guess, gameinfo, quit ----");
             try{
                 String[] cmd = readNextLine().split(" ");
                 Command ourCommand;
@@ -53,6 +56,7 @@ public class Hangman implements Runnable {
                         break;
                     case GAMEINFO :
                         contr.getGameInfo();
+                        break;
                     default :
                         outMgr.println("Enter a correct command");
                 }
