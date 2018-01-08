@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package se.kth.id1212.chatapplication.common;
 
 /**
@@ -15,6 +10,9 @@ public enum MsgType {
      */
     NEWMESSAGE,
     
+    /**
+     * Command to add a new username to the server.
+     */
     NEWUSER, 
     
     /**
@@ -28,5 +26,8 @@ public enum MsgType {
      */
     SHOWUSER,
     
+    /**
+     * When a user joins or leaves the conversation, the JOINCONVERSATION or LEAVECONVERSATION commands are used.
+     */
     JOINCONVERSATION,LEAVECONVERSATION
 }

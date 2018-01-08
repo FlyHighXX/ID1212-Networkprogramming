@@ -12,7 +12,7 @@ import se.kth.id1212.chatapplication.common.Message;
 public class ChatClient implements Runnable {
     private boolean receivedCmds=false;
     private final Scanner console = new Scanner(System.in);
-    private final ThreadSafeStdOut outMgr = new ThreadSafeStdOut();
+    private final SafeOutput outMgr = new SafeOutput();
     private final ServerConnection serverConnection = new ServerConnection(new ConsoleOutput());
     
     public void start(){
