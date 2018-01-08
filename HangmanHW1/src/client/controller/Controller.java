@@ -3,9 +3,7 @@ package client.controller;
 import client.net.OutputHandler;
 import client.net.ServerConnection;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

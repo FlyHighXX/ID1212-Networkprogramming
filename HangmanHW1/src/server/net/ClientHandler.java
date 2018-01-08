@@ -15,7 +15,7 @@ import server.controller.Controller;
  */
 class ClientHandler implements Runnable {
     private final Controller contr = new Controller();
-    private final ChatServer server;
+    private final HangmanServer server;
     private final Socket clientSocket;
     private BufferedReader fromClient;
     private PrintWriter toClient;
@@ -27,7 +27,7 @@ class ClientHandler implements Runnable {
      *
      * @param clientSocket The socket to which this handler's client is connected.
      */
-    ClientHandler(ChatServer server, Socket clientSocket) {
+    ClientHandler(HangmanServer server, Socket clientSocket) {
         this.server = server;
         this.clientSocket = clientSocket;
         connected = true;
