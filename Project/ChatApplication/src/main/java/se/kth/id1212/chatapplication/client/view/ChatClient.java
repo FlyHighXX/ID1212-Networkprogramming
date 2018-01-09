@@ -4,6 +4,7 @@ import java.util.Scanner;
 import se.kth.id1212.chatapplication.client.net.OutputHandler;
 import se.kth.id1212.chatapplication.client.net.ServerConnection;
 import se.kth.id1212.chatapplication.common.Message;
+import se.kth.id1212.chatapplication.common.MsgType;
 
 /**
  *
@@ -30,7 +31,27 @@ public class ChatClient implements Runnable {
             int choice = showMenu();
             switch(choice){
                 case 1 :
-                    serverConnection.showUsers();
+                    boolean inShowUsers=true;
+                    String defaultInput="try";
+                    while(inShowUsers){
+                        String input="";
+                        if(!defaultInput.equals("try")){
+                            input = this.console.nextLine();
+                        }
+                        
+                        if(input.equals("quit")){
+                            inShowUsers=false;
+                        }
+                        else if(input.equals("retry") || defaultInput.equals("try")){
+                            if(defaultInput.equals("try")){
+                                defaultInput="";
+                            }
+                            this.outMgr.println("-- The current users that are running this application --");
+                            serverConnection.showUsers();
+                            this.outMgr.println("Type retry to update, or quit to cancel");
+                        }
+                        
+                    }
                     break;
                 case 2 :
                     serverConnection.enterConversation();
